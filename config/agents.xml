@@ -9,5 +9,10 @@
 		<set class-name="deliberative.template.DeliberativeTemplate"/>
 		<set algorithm="BFS"/>
 	</agent>
-	
+
+	<agent name="deliberative-bustillosQuelali">
+		<set class-path="build/classes/java/main/deliberative/bustillos_Quelali"/>
+		<set class-name="deliberative.bustillos_Quelali.DeliberativeTemplate_BustillosQuelali"/>
+		<set algorithm="BFS"/>
+	</agent>
 </agents>
