@@ -35,7 +35,6 @@ public class DeliberativeTemplate implements DeliberativeBehavior {
 		this.topology = topology;
 		this.td = td;
 		this.agent = agent;
-		
 		// initialize the planner
 		int capacity = agent.vehicles().get(0).capacity();
 		String algorithmName = agent.readProperty("algorithm", String.class, "ASTAR");
@@ -49,7 +48,6 @@ public class DeliberativeTemplate implements DeliberativeBehavior {
 	@Override
 	public Plan plan(Vehicle vehicle, TaskSet tasks) {
 		Plan plan;
-
 		// Compute the plan with the selected algorithm.
 		switch (algorithm) {
 		case ASTAR:
@@ -72,17 +70,19 @@ public class DeliberativeTemplate implements DeliberativeBehavior {
 
 		for (Task task : tasks) {
 			// move: current city => pickup location
-			for (City city : current.pathTo(task.pickupCity))
+			for (City city : current.pathTo(task.pickupCity)) {
 				plan.appendMove(city);
-
-			plan.appendPickup(task);
+				//System.out.println("Current: " + current + " PickupCity :" + current.pathTo(task.pickupCity));
+			}
+			plan.appendPickup(task); //Action
+			//System.out.println("Task: " + task); // Task: (Task 1, 3 kg, 40875 CHF, Z³rich -> Sion)
 
 			// move: pickup location => delivery location
-			for (City city : task.path())
+			for (City city : task.path()) {
 				plan.appendMove(city);
-
+				//System.out.println("City2: " + city);
+			}
 			plan.appendDelivery(task);
-
 			// set current city
 			current = task.deliveryCity;
 		}
