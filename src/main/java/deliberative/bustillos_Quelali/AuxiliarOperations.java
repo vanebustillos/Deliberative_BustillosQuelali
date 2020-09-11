@@ -13,6 +13,9 @@ public class AuxiliarOperations {
 
     public List<State> getSuccessors(State state, int capacity){
         List<State> successors = new ArrayList<>();
+        if(isGoalState(state)){
+            return Collections.emptyList();
+        }
         State child = clone(state);
 
         for (Task pickupTask : child.packagesToPickup) {
