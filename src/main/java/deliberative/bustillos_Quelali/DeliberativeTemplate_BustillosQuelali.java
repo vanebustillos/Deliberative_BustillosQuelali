@@ -11,6 +11,8 @@ import logist.task.TaskSet;
 import logist.topology.Topology;
 import logist.topology.Topology.City;
 
+import java.util.LinkedList;
+
 /**
  * An optimal planner for one vehicle.
  */
@@ -29,6 +31,8 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 
 	/* the planning class */
 	Algorithm algorithm;
+
+	AuxiliarOperations operations = new AuxiliarOperations();
 	
 	@Override
 	public void setup(Topology topology, TaskDistribution td, Agent agent) {
@@ -87,6 +91,22 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 			current = task.deliveryCity;
 		}
 		return plan;
+	}
+	public void bfs(Vehicle vehicle, TaskSet tasks) {
+		Plan plan = new Plan(vehicle.getCurrentCity());
+		State initialState = new State(vehicle.getCurrentCity(), tasks, null);
+		LinkedList<State> q = new LinkedList<>();
+		q.add(initialState);
+		do {
+			State state = q.removeFirst();
+			if (operations.isGoalState(state)) {
+				System.out.println("Finish Tasks!");
+				break;
+			}
+			LinkedList<State> s = new LinkedList<>(operations.getSuccessors(state,capacity));
+			q.addAll(0,s);
+
+		} while (!q.isEmpty());
 	}
 
 	@Override

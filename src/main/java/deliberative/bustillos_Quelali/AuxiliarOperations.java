@@ -1,6 +1,7 @@
 package deliberative.bustillos_Quelali;
 
 import logist.task.Task;
+import logist.topology.Topology.City;
 
 import java.util.*;
 
@@ -27,14 +28,14 @@ public class AuxiliarOperations {
                     if(!child.packagesToDelivery.isEmpty()){
                         for (Task moveTask: child.packagesToDelivery) {
                             State successor = clone(child);
-                            successor.currentCity = moveTask.deliveryCity;
+                            List<City> path = successor.getCurrentCity().pathTo(moveTask.deliveryCity);
+                            successor.currentCity = path.get(0);
                             successors.add(successor);
                         }
                     }
                 }
             }
         }
-
         for (Task deliveryTask: child.packagesToDelivery){
             if(deliveryTask.deliveryCity.equals(child.currentCity)){
                 State successor = clone(child);
@@ -44,4 +45,8 @@ public class AuxiliarOperations {
         }
         return successors;
     }
+    public boolean isGoalState(State state) {
+        return state.packagesToDelivery.isEmpty() && state.packagesToPickup.isEmpty();
+    }
+
 }
