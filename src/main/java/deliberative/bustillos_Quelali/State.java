@@ -1,19 +1,24 @@
 package deliberative.bustillos_Quelali;
 
+import logist.plan.Action;
 import logist.task.TaskSet;
 import logist.topology.Topology.City;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class State {
     City currentCity;
     TaskSet packagesToPickup;
     TaskSet packagesToDelivery;
+    List<Action> actions;
 
-    public State(City currentCity, TaskSet packagesToPickup, TaskSet packagesToDelivery) {
+    public State(City currentCity, TaskSet packagesToPickup, TaskSet packagesToDelivery, List<Action> actionList) {
         this.currentCity = currentCity;
-        this.packagesToPickup = packagesToPickup;
-        this.packagesToDelivery = packagesToDelivery;
+        this.packagesToPickup = packagesToPickup.clone();
+        this.packagesToDelivery = packagesToDelivery.clone();
+        this.actions = new ArrayList<>(actionList);
     }
 
     public City getCurrentCity() {
@@ -40,6 +45,14 @@ public class State {
         this.packagesToDelivery = packagesToDelivery;
     }
 
+    public List<Action> getActions() {
+        return actions;
+    }
+
+    public void setActions(List<Action> actions) {
+        this.actions = actions;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -47,11 +60,12 @@ public class State {
         State state = (State) o;
         return currentCity.equals(state.currentCity) &&
                 Objects.equals(packagesToPickup, state.packagesToPickup) &&
-                Objects.equals(packagesToDelivery, state.packagesToDelivery);
+                Objects.equals(packagesToDelivery, state.packagesToDelivery) &&
+                Objects.equals(actions, state.actions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(currentCity, packagesToPickup, packagesToDelivery);
+        return Objects.hash(currentCity, packagesToPickup, packagesToDelivery, actions);
     }
 }

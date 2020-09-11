@@ -3,6 +3,7 @@ package deliberative.bustillos_Quelali;
 /* import table */
 import logist.agent.Agent;
 import logist.behavior.DeliberativeBehavior;
+import logist.plan.Action;
 import logist.plan.Plan;
 import logist.simulation.Vehicle;
 import logist.task.Task;
@@ -45,21 +46,24 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 		
 		// Throws IllegalArgumentException if algorithm is unknown
 		algorithm = Algorithm.valueOf(algorithmName.toUpperCase());
-		
+
 		// ...
 	}
 	
 	@Override
 	public Plan plan(Vehicle vehicle, TaskSet tasks) {
 		Plan plan;
+
 		// Compute the plan with the selected algorithm.
 		switch (algorithm) {
 		case ASTAR:
 			// ...
+			//plan = bfs(vehicle,tasks);
 			plan = naivePlan(vehicle, tasks);
 			break;
 		case BFS:
 			// ...
+			//plan = bfs(vehicle,tasks);
 			plan = naivePlan(vehicle, tasks);
 			break;
 		default:
@@ -92,9 +96,10 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 		}
 		return plan;
 	}
-	public void bfs(Vehicle vehicle, TaskSet tasks) {
+/*
+	private Plan bfs(Vehicle vehicle, TaskSet tasks) {
 		Plan plan = new Plan(vehicle.getCurrentCity());
-		State initialState = new State(vehicle.getCurrentCity(), tasks, null);
+		State initialState = new State(vehicle.getCurrentCity(), tasks, vehicle.getCurrentTasks(), null);
 		LinkedList<State> q = new LinkedList<>();
 		q.add(initialState);
 		do {
@@ -104,11 +109,13 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 				break;
 			}
 			LinkedList<State> s = new LinkedList<>(operations.getSuccessors(state,capacity));
-			q.addAll(0,s);
+			q.addAll(s);
+
 
 		} while (!q.isEmpty());
+		return plan;
 	}
-
+*/
 	@Override
 	public void planCancelled(TaskSet carriedTasks) {
 		
