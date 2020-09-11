@@ -12,6 +12,7 @@ import logist.task.TaskSet;
 import logist.topology.Topology;
 import logist.topology.Topology.City;
 
+import java.util.Collections;
 import java.util.LinkedList;
 
 /**
@@ -47,7 +48,6 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 		// Throws IllegalArgumentException if algorithm is unknown
 		algorithm = Algorithm.valueOf(algorithmName.toUpperCase());
 
-		// ...
 	}
 	
 	@Override
@@ -58,13 +58,13 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 		switch (algorithm) {
 		case ASTAR:
 			// ...
-			//plan = bfs(vehicle,tasks);
-			plan = naivePlan(vehicle, tasks);
+			plan = bfs(vehicle,tasks);
+			//plan = naivePlan(vehicle, tasks);
 			break;
 		case BFS:
 			// ...
-			//plan = bfs(vehicle,tasks);
-			plan = naivePlan(vehicle, tasks);
+			plan = bfs(vehicle,tasks);
+			//plan = naivePlan(vehicle, tasks);
 			break;
 		default:
 			throw new AssertionError("Should not happen.");
@@ -96,26 +96,27 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 		}
 		return plan;
 	}
-/*
+
 	private Plan bfs(Vehicle vehicle, TaskSet tasks) {
 		Plan plan = new Plan(vehicle.getCurrentCity());
-		State initialState = new State(vehicle.getCurrentCity(), tasks, vehicle.getCurrentTasks(), null);
+		State initialState = new State(vehicle.getCurrentCity(), tasks, vehicle.getCurrentTasks(), Collections.emptyList());
 		LinkedList<State> q = new LinkedList<>();
 		q.add(initialState);
 		do {
 			State state = q.removeFirst();
 			if (operations.isGoalState(state)) {
 				System.out.println("Finish Tasks!");
+				for (Action action: state.getActions()) {
+					plan.append(action);
+				}
 				break;
 			}
 			LinkedList<State> s = new LinkedList<>(operations.getSuccessors(state,capacity));
 			q.addAll(s);
-
-
 		} while (!q.isEmpty());
 		return plan;
 	}
-*/
+
 	@Override
 	public void planCancelled(TaskSet carriedTasks) {
 		

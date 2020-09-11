@@ -1,7 +1,9 @@
 package deliberative.bustillos_Quelali;
 
+import logist.plan.Action;
 import logist.plan.Action.*;
 import logist.task.Task;
+import logist.topology.Topology;
 import logist.topology.Topology.City;
 
 import java.util.*;
@@ -58,23 +60,19 @@ public class AuxiliarOperations {
 
         for (Task taskPickup: state.packagesToPickup) {
             State successor = clone(state);
-            int currentCapacity = successor.packagesToPickup.weightSum();
-            int availableCapacity = capacity - currentCapacity;
 
-            if(currentCapacity < capacity && taskPickup.weight <= availableCapacity) {
+            if(availableCapacityExists(successor, taskPickup, capacity)) {
                 if (taskPickup.pickupCity.equals(state.currentCity)) {
                     successor.actions.add(new Pickup(taskPickup));
                     successor.packagesToDelivery.add(taskPickup);
                     successor.packagesToPickup.remove(taskPickup);
                 } else {
                     List<City> path = successor.getCurrentCity().pathTo(taskPickup.pickupCity);
-                    for (City city : path) {
-                        successor.actions.add(new Move(city));
-                    }
-                    successor.currentCity = taskPickup.pickupCity; //????
+                    processMoves(successor, path);
+                    successor.currentCity = taskPickup.pickupCity;
                 }
+                successors.add(successor);
             }
-            successors.add(successor);
         }
         for (Task taskDelivery: state.packagesToDelivery) {
             State successor = clone(state);
@@ -83,9 +81,7 @@ public class AuxiliarOperations {
                 successor.packagesToDelivery.remove(taskDelivery);
             } else {
                 List<City> path = successor.getCurrentCity().pathTo(taskDelivery.deliveryCity);
-                for (City city : path) {
-                    successor.actions.add(new Move(city));
-                }
+                processMoves(successor, path);
                 successor.currentCity = taskDelivery.deliveryCity;
             }
             successors.add(successor);
@@ -93,7 +89,17 @@ public class AuxiliarOperations {
         return successors;
     }
 
+    private void processMoves(State successor, List<City> path) {
+        for (City city : path) {
+            successor.actions.add(new Move(city));
+        }
+    }
 
+    private boolean availableCapacityExists(State state, Task taskPickup, int capacity){
+        int currentCapacity = state.packagesToPickup.weightSum();
+        int availableCapacity = capacity - currentCapacity;
+        return (currentCapacity < capacity && taskPickup.weight <= availableCapacity);
+    }
 
     public boolean isGoalState(State state) {
         return state.packagesToDelivery.isEmpty() && state.packagesToPickup.isEmpty();
