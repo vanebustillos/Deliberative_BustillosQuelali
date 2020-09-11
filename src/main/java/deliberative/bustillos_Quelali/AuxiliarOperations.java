@@ -1,6 +1,5 @@
 package deliberative.bustillos_Quelali;
 
-import logist.plan.Action;
 import logist.plan.Action.*;
 import logist.task.Task;
 import logist.topology.Topology.City;
@@ -53,6 +52,48 @@ public class AuxiliarOperations {
         }
         return successors;
     }*/
+
+    public List<State> getSuccessors(State state, int capacity) {
+        List<State> successors = new ArrayList<>();
+
+        for (Task taskPickup: state.packagesToPickup) {
+            State successor = clone(state);
+            int currentCapacity = successor.packagesToPickup.weightSum();
+            int availableCapacity = capacity - currentCapacity;
+
+            if(currentCapacity < capacity && taskPickup.weight <= availableCapacity) {
+                if (taskPickup.pickupCity.equals(state.currentCity)) {
+                    successor.actions.add(new Pickup(taskPickup));
+                    successor.packagesToDelivery.add(taskPickup);
+                    successor.packagesToPickup.remove(taskPickup);
+                } else {
+                    List<City> path = successor.getCurrentCity().pathTo(taskPickup.pickupCity);
+                    for (City city : path) {
+                        successor.actions.add(new Move(city));
+                    }
+                    successor.currentCity = taskPickup.pickupCity; //????
+                }
+            }
+            successors.add(successor);
+        }
+        for (Task taskDelivery: state.packagesToDelivery) {
+            State successor = clone(state);
+            if (taskDelivery.deliveryCity.equals(state.currentCity)) {
+                successor.actions.add(new Delivery(taskDelivery));
+                successor.packagesToDelivery.remove(taskDelivery);
+            } else {
+                List<City> path = successor.getCurrentCity().pathTo(taskDelivery.deliveryCity);
+                for (City city : path) {
+                    successor.actions.add(new Move(city));
+                }
+                successor.currentCity = taskDelivery.deliveryCity;
+            }
+            successors.add(successor);
+        }
+        return successors;
+    }
+
+
 
     public boolean isGoalState(State state) {
         return state.packagesToDelivery.isEmpty() && state.packagesToPickup.isEmpty();
