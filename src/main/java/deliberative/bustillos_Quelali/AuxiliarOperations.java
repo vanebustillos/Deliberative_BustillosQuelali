@@ -20,27 +20,23 @@ public class AuxiliarOperations {
         for (Task taskPickup: state.packagesToPickup) {
             if(isPossiblePickup(state, taskPickup, capacity)) {
                 State successor = clone(state);
-                if (taskPickup.pickupCity.equals(state.currentCity)) {
-                    processPickup(taskPickup, successor);
-                } else {
+                if(!taskPickup.pickupCity.equals(state.currentCity)){
                     List<City> path = successor.getCurrentCity().pathTo(taskPickup.pickupCity);
                     processMoves(successor, path);
                     successor.currentCity = taskPickup.pickupCity;
-                    processPickup(taskPickup, successor);
                 }
+                processPickup(taskPickup, successor);
                 successors.add(successor);
             }
         }
         for (Task taskDelivery: state.packagesToDelivery) {
             State successor = clone(state);
-            if (taskDelivery.deliveryCity.equals(state.currentCity)) {
-                processDelivery(taskDelivery, successor);
-            } else {
+            if(!taskDelivery.deliveryCity.equals(state.currentCity)){
                 List<City> path = successor.getCurrentCity().pathTo(taskDelivery.deliveryCity);
                 processMoves(successor, path);
                 successor.currentCity = taskDelivery.deliveryCity;
-                processDelivery(taskDelivery, successor);
             }
+            processDelivery(taskDelivery, successor);
             successors.add(successor);
         }
         return successors;
