@@ -42,7 +42,7 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 		this.td = td;
 		this.agent = agent;
 		// initialize the planner
-		int capacity = agent.vehicles().get(0).capacity();
+		capacity = agent.vehicles().get(0).capacity();
 		String algorithmName = agent.readProperty("algorithm", String.class, "ASTAR");
 		
 		// Throws IllegalArgumentException if algorithm is unknown
@@ -105,14 +105,12 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 		do {
 			State state = q.removeFirst();
 			if (operations.isGoalState(state)) {
-				System.out.println("Finish Tasks!");
 				for (Action action: state.getActions()) {
 					plan.append(action);
 				}
 				break;
 			}
-			LinkedList<State> s = new LinkedList<>(operations.getSuccessors(state,capacity));
-			q.addAll(s);
+			q.addAll(operations.getSuccessors(state,capacity));
 		} while (!q.isEmpty());
 		return plan;
 	}
