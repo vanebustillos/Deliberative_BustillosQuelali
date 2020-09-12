@@ -1,6 +1,5 @@
 package deliberative.bustillos_Quelali;
 
-import logist.plan.Action;
 import logist.plan.Action.*;
 import logist.task.Task;
 import logist.task.TaskSet;
@@ -40,6 +39,20 @@ public class AuxiliarOperations {
             successors.add(successor);
         }
         return successors;
+    }
+
+    public Double h1(City currentCity, City destinationCity) {
+        return currentCity.distanceTo(destinationCity);
+    }
+    public Double h2(State state) {
+        double minDistance = Double.MAX_VALUE;
+        for (Task task: state.getPackagesToPickup()) {
+            Double distance = state.getCurrentCity().distanceTo(task.pickupCity);
+            if (distance < minDistance) {
+                minDistance = distance;
+            }
+        }
+        return minDistance;
     }
 
     private void processDelivery(Task taskDelivery, State successor) {

@@ -12,8 +12,7 @@ import logist.task.TaskSet;
 import logist.topology.Topology;
 import logist.topology.Topology.City;
 
-import java.util.Collections;
-import java.util.LinkedList;
+import java.util.*;
 
 /**
  * An optimal planner for one vehicle.
@@ -58,7 +57,7 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 		switch (algorithm) {
 		case ASTAR:
 			// ...
-			plan = bfs(vehicle,tasks);
+			plan = aStar(vehicle,tasks);
 			//plan = naivePlan(vehicle, tasks);
 			break;
 		case BFS:
@@ -113,6 +112,31 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 			q.addAll(operations.getSuccessors(state,capacity));
 		} while (!q.isEmpty());
 		return plan;
+	}
+	private Plan aStar(Vehicle vehicle, TaskSet tasks) {
+		Plan plan = new Plan(vehicle.getCurrentCity());
+		State initialState = new State(vehicle.getCurrentCity(), tasks, vehicle.getCurrentTasks(), Collections.emptyList());
+		List<State> frontier = new ArrayList<>();
+		frontier.add(initialState);
+		while (!frontier.isEmpty()) {
+			State bestState = null;
+			double minHeuristic = Double.MAX_VALUE;
+			for (State potentialNext: frontier) {
+				if (operations.h2(potentialNext) < minHeuristic) {
+					minHeuristic = operations.h2(potentialNext);
+					bestState = potentialNext;
+				}
+			}
+			frontier.remove(bestState);
+			if (operations.isGoalState(bestState)) {
+				for (Action action: bestState.getActions()) {
+					plan.append(action);
+				}
+				return plan;
+			}
+			frontier.addAll(operations.getSuccessors(bestState, capacity));
+		}
+		return null;
 	}
 
 	@Override

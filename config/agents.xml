@@ -13,6 +13,6 @@
 	<agent name="deliberative-bustillosQuelali">
 		<set class-path="build/classes/java/main/deliberative/bustillos_Quelali"/>
 		<set class-name="deliberative.bustillos_Quelali.DeliberativeTemplate_BustillosQuelali"/>
-		<set algorithm="BFS"/>
+		<set algorithm="ASTAR"/>
 	</agent>
 </agents>
