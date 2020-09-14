@@ -14,15 +14,13 @@ public class State {
     TaskSet packagesToDelivery;
     List<Action> actions;
     int capacity;
-    int depth;
 
-    public State(City currentCity, TaskSet packagesToPickup, TaskSet packagesToDelivery, List<Action> actions, int capacity, int depth) {
+    public State(City currentCity, TaskSet packagesToPickup, TaskSet packagesToDelivery, List<Action> actions, int capacity) {
         this.currentCity = currentCity;
         this.packagesToPickup = packagesToPickup.clone();
         this.packagesToDelivery = packagesToDelivery.clone();
         this.actions = new ArrayList<>(actions);
         this.capacity = capacity;
-        this.depth = depth;
     }
 
     @Override
@@ -31,7 +29,6 @@ public class State {
         if (o == null || getClass() != o.getClass()) return false;
         State state = (State) o;
         return capacity == state.capacity &&
-                depth == state.depth &&
                 currentCity.equals(state.currentCity) &&
                 Objects.equals(packagesToPickup, state.packagesToPickup) &&
                 Objects.equals(packagesToDelivery, state.packagesToDelivery) &&
@@ -40,7 +37,7 @@ public class State {
 
     @Override
     public int hashCode() {
-        return Objects.hash(currentCity, packagesToPickup, packagesToDelivery, actions, capacity, depth);
+        return Objects.hash(currentCity, packagesToPickup, packagesToDelivery, actions, capacity);
     }
 
     public City getCurrentCity() {
@@ -62,9 +59,4 @@ public class State {
     public int getCapacity() {
         return capacity;
     }
-
-    public int getDepth() {
-        return depth;
-    }
-
 }

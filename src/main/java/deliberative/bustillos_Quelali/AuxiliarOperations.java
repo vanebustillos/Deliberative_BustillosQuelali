@@ -1,6 +1,7 @@
 package deliberative.bustillos_Quelali;
 
 import logist.plan.Action.*;
+import logist.simulation.Vehicle;
 import logist.task.Task;
 import logist.task.TaskSet;
 import logist.topology.Topology.City;
@@ -10,12 +11,11 @@ import java.util.*;
 public class AuxiliarOperations {
 
     public State clone(State state) {
-        return new State(state.currentCity, state.packagesToPickup, state.packagesToDelivery, state.actions, state.capacity, state.depth);
+        return new State(state.currentCity, state.packagesToPickup, state.packagesToDelivery, state.actions, state.capacity);
     }
 
     public List<State> getSuccessors(State state) {
         List<State> successors = new ArrayList<>();
-
         for (Task taskPickup: state.packagesToPickup) {
             if(isPossiblePickup(state, taskPickup)) {
                 State successor = clone(state);
@@ -37,11 +37,42 @@ public class AuxiliarOperations {
             }
             processDelivery(taskDelivery, successor);
             successors.add(successor);
-        }
+        }/*
+        successors.forEach(stateSuccessors -> {
+            stateSuccessors.depth = stateSuccessors.depth +1;
+        });*/
+
         return successors;
     }
+    public Double realCost(Vehicle vehicle,City city1, City city2) {
+        return city1.distanceTo(city2) * vehicle.costPerKm();
+    }
+    public Double h1(Vehicle vehicle,State state) {
+        Double maxDistance = 0.0;
+        City farthestCity = null;
+        for (Task task: state.getPackagesToPickup()) {
+            Double distance = state.getCurrentCity().distanceTo(task.pickupCity);
+            if (distance > maxDistance) {
+                maxDistance = distance;
+                farthestCity = task.pickupCity;
+            }
+        }
+        return realCost(vehicle, state.getCurrentCity(), farthestCity);
+    }
+    public Double h2(Vehicle vehicle, State state) {
+        Double cost = 0.0;
+        for (Task task: state.getPackagesToPickup()) {
+            cost = cost + realCost(vehicle, state.getCurrentCity(), task.pickupCity);
+        }
+        for (Task task: state.getPackagesToDelivery()) {
+            Double netCost = realCost(vehicle, state.getCurrentCity(), task.deliveryCity) - task.reward;
+            cost = cost + netCost;
+        }
+        return cost;
 
-    public Double h2(State state) {
+    }
+
+    public Double h3(State state) {
         double minDistance = Double.MAX_VALUE;
         for (Task task: state.getPackagesToPickup()) {
             Double distance = state.getCurrentCity().distanceTo(task.pickupCity);
@@ -51,19 +82,6 @@ public class AuxiliarOperations {
         }
         return minDistance;
     }
-    /*
-    * Heuristic that provides the current amount of packages in both package list of the state
-    * */
-    public Packages h3(State state) {
-        return new Packages(state.getPackagesToPickup().size(), state.getPackagesToDelivery().size());
-    }
-    /*
-     *Heuristic that provides the sumatory of the size of pickUp and delivery list of the state
-     *  */
-    public int h4(State state) {
-        return state.getPackagesToPickup().size() + state.getPackagesToDelivery().size();
-    }
-
     private void processDelivery(Task taskDelivery, State successor) {
         successor.actions.add(new Delivery(taskDelivery));
         successor.packagesToDelivery.remove(taskDelivery);
@@ -108,5 +126,6 @@ public class AuxiliarOperations {
         public int getSizePackagesDelivery() {
             return sizePackagesDelivery;
         }
+
     }
 }

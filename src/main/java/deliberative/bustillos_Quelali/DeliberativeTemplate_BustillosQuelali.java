@@ -55,6 +55,9 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 		// Compute the plan with the selected algorithm.
 		switch (algorithm) {
 		case ASTAR:
+			for (Task task: tasks) {
+				System.out.println(task);
+			}
 			plan = aStar(vehicle,tasks);
 			break;
 		case BFS:
@@ -68,7 +71,7 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 
 	private Plan bfs(Vehicle vehicle, TaskSet tasks) {
 		Plan plan = new Plan(vehicle.getCurrentCity());
-		State initialState = new State(vehicle.getCurrentCity(), tasks, vehicle.getCurrentTasks(), Collections.emptyList(), capacity,0);
+		State initialState = new State(vehicle.getCurrentCity(), tasks, vehicle.getCurrentTasks(), Collections.emptyList(), capacity);
 		LinkedList<State> q = new LinkedList<>();
 		q.add(initialState);
 		do {
@@ -85,15 +88,15 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 	}
 	private Plan aStar(Vehicle vehicle, TaskSet tasks) {
 		Plan plan = new Plan(vehicle.getCurrentCity());
-		State initialState = new State(vehicle.getCurrentCity(), tasks, vehicle.getCurrentTasks(), Collections.emptyList(),capacity,0);
+		State initialState = new State(vehicle.getCurrentCity(), tasks, vehicle.getCurrentTasks(), Collections.emptyList(),capacity);
 		List<State> border = new ArrayList<>();
 		border.add(initialState);
 		while (!border.isEmpty()) {
 			State bestState = null;
-			Integer minHeuristic = Integer.MAX_VALUE;
+			Double maxHeuristic = - Double.MAX_VALUE;
 			for (State potentialNext: border) {
-				if (operations.h4(potentialNext) < minHeuristic) {
-					minHeuristic = operations.h4(potentialNext);
+				if (operations.h2(vehicle,potentialNext) > maxHeuristic) {
+					maxHeuristic = operations.h2(vehicle, potentialNext);
 					bestState = potentialNext;
 				}
 			}
@@ -107,7 +110,9 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 				}
 				return plan;
 			}
-			border.addAll(operations.getSuccessors(bestState));
+			List<State> successors = operations.getSuccessors(bestState);
+			border.addAll(successors);
+
 		}
 		return null;
 	}
