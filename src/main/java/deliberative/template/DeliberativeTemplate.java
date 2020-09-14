@@ -41,8 +41,6 @@ public class DeliberativeTemplate implements DeliberativeBehavior {
 		
 		// Throws IllegalArgumentException if algorithm is unknown
 		algorithm = Algorithm.valueOf(algorithmName.toUpperCase());
-		
-		// ...
 	}
 	
 	@Override
@@ -51,11 +49,9 @@ public class DeliberativeTemplate implements DeliberativeBehavior {
 		// Compute the plan with the selected algorithm.
 		switch (algorithm) {
 		case ASTAR:
-			// ...
 			plan = naivePlan(vehicle, tasks);
 			break;
 		case BFS:
-			// ...
 			plan = naivePlan(vehicle, tasks);
 			break;
 		default:
@@ -72,15 +68,12 @@ public class DeliberativeTemplate implements DeliberativeBehavior {
 			// move: current city => pickup location
 			for (City city : current.pathTo(task.pickupCity)) {
 				plan.appendMove(city);
-				//System.out.println("Current: " + current + " PickupCity :" + current.pathTo(task.pickupCity));
 			}
 			plan.appendPickup(task); //Action
-			//System.out.println("Task: " + task); // Task: (Task 1, 3 kg, 40875 CHF, Z³rich -> Sion)
 
 			// move: pickup location => delivery location
 			for (City city : task.path()) {
 				plan.appendMove(city);
-				//System.out.println("City2: " + city);
 			}
 			plan.appendDelivery(task);
 			// set current city

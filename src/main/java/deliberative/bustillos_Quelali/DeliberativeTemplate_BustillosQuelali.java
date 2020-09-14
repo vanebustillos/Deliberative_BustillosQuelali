@@ -86,6 +86,7 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 		} while (!q.isEmpty());
 		return plan;
 	}
+
 	private Plan aStar(Vehicle vehicle, TaskSet tasks) {
 		Plan plan = new Plan(vehicle.getCurrentCity());
 		State initialState = new State(vehicle.getCurrentCity(), tasks, vehicle.getCurrentTasks(), Collections.emptyList(),capacity);
@@ -93,6 +94,15 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 		border.add(initialState);
 		while (!border.isEmpty()) {
 			State bestState = null;
+			//-------------------H3
+			/*double minHeuristic = Double.MAX_VALUE;
+			for (State potentialNext: border) {
+				if (operations.h3(potentialNext) < minHeuristic) {
+					minHeuristic = operations.h3( potentialNext);
+					bestState = potentialNext;
+				}
+			}*/
+			//-------------------H2
 			Double maxHeuristic = - Double.MAX_VALUE;
 			for (State potentialNext: border) {
 				if (operations.h2(vehicle,potentialNext) > maxHeuristic) {
@@ -100,6 +110,7 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 					bestState = potentialNext;
 				}
 			}
+			//-------------------
 			if(bestState == null){
 				throw new IllegalStateException("Unexpected state left.");
 			}
@@ -112,7 +123,6 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 			}
 			List<State> successors = operations.getSuccessors(bestState);
 			border.addAll(successors);
-
 		}
 		return null;
 	}

@@ -3,7 +3,6 @@ package deliberative.bustillos_Quelali;
 import logist.plan.Action.*;
 import logist.simulation.Vehicle;
 import logist.task.Task;
-import logist.task.TaskSet;
 import logist.topology.Topology.City;
 
 import java.util.*;
@@ -37,28 +36,48 @@ public class AuxiliarOperations {
             }
             processDelivery(taskDelivery, successor);
             successors.add(successor);
-        }/*
-        successors.forEach(stateSuccessors -> {
-            stateSuccessors.depth = stateSuccessors.depth +1;
-        });*/
-
+        }
         return successors;
     }
+
     public Double realCost(Vehicle vehicle,City city1, City city2) {
-        return city1.distanceTo(city2) * vehicle.costPerKm();
+        List<City> path = city1.pathTo(city2);
+        double distance = 0.0;
+        City last = city1;
+        for (City city:path) {
+            distance = distance + last.distanceTo(city);
+            last = city;
+        }
+        //return city1.distanceTo(city2) * vehicle.costPerKm();
+        return distance * vehicle.costPerKm();
     }
+
     public Double h1(Vehicle vehicle,State state) {
         Double maxDistance = 0.0;
         City farthestCity = null;
-        for (Task task: state.getPackagesToPickup()) {
-            Double distance = state.getCurrentCity().distanceTo(task.pickupCity);
-            if (distance > maxDistance) {
-                maxDistance = distance;
-                farthestCity = task.pickupCity;
+        if(!state.getPackagesToPickup().isEmpty()){
+            for (Task task: state.getPackagesToPickup()) {
+                Double distance = state.getCurrentCity().distanceTo(task.pickupCity);
+                if (distance > maxDistance) {
+                    maxDistance = distance;
+                    farthestCity = task.pickupCity;
+                }
             }
         }
+        else {
+            for (Task task : state.getPackagesToDelivery()) {
+                Double distance = state.getCurrentCity().distanceTo(task.deliveryCity);
+                if (distance > maxDistance) {
+                    maxDistance = distance;
+                    farthestCity = task.deliveryCity;
+                }
+            }
+        }
+
         return realCost(vehicle, state.getCurrentCity(), farthestCity);
     }
+
+
     public Double h2(Vehicle vehicle, State state) {
         Double cost = 0.0;
         for (Task task: state.getPackagesToPickup()) {
@@ -71,17 +90,13 @@ public class AuxiliarOperations {
         return cost;
 
     }
-
-    public Double h3(State state) {
-        double minDistance = Double.MAX_VALUE;
-        for (Task task: state.getPackagesToPickup()) {
-            Double distance = state.getCurrentCity().distanceTo(task.pickupCity);
-            if (distance < minDistance) {
-                minDistance = distance;
-            }
+    public double h3(State state){
+        if(state.getPackagesToPickup().size() != 0 && state.getPackagesToDelivery().size() != 0){
+        return state.getPackagesToDelivery().size() / state.getPackagesToPickup().size();
         }
-        return minDistance;
+        return 0;
     }
+
     private void processDelivery(Task taskDelivery, State successor) {
         successor.actions.add(new Delivery(taskDelivery));
         successor.packagesToDelivery.remove(taskDelivery);
@@ -109,23 +124,5 @@ public class AuxiliarOperations {
 
     public boolean isGoalState(State state) {
         return state.packagesToDelivery.isEmpty() && state.packagesToPickup.isEmpty();
-    }
-
-    public class Packages {
-        int sizePackagesPickup;
-        int  sizePackagesDelivery;
-
-        public Packages(int sizePackagesPickup, int sizePackagesDelivery) {
-            this.sizePackagesPickup = sizePackagesPickup;
-            this.sizePackagesDelivery = sizePackagesDelivery;
-        }
-        public int getSizePackagesPickup() {
-            return sizePackagesPickup;
-        }
-
-        public int getSizePackagesDelivery() {
-            return sizePackagesDelivery;
-        }
-
     }
 }
