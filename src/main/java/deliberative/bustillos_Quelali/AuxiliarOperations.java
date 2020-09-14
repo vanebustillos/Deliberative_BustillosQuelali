@@ -55,6 +55,18 @@ public class AuxiliarOperations {
         }
         return minDistance;
     }
+    /*
+    * Heuristic that provides the current amount of packages in both package list of the state
+    * */
+    public Packages h3(State state) {
+        return new Packages(state.getPackagesToPickup().size(), state.getPackagesToDelivery().size());
+    }
+    /*
+     *Heuristic that provides the sumatory of the size of pickUp and delivery list of the state
+     *  */
+    public int h4(State state) {
+        return state.getPackagesToPickup().size() + state.getPackagesToDelivery().size();
+    }
 
     private void processDelivery(Task taskDelivery, State successor) {
         successor.actions.add(new Delivery(taskDelivery));
@@ -83,5 +95,22 @@ public class AuxiliarOperations {
 
     public boolean isGoalState(State state) {
         return state.packagesToDelivery.isEmpty() && state.packagesToPickup.isEmpty();
+    }
+
+    public class Packages {
+        int sizePackagesPickup;
+        int  sizePackagesDelivery;
+
+        public Packages(int sizePackagesPickup, int sizePackagesDelivery) {
+            this.sizePackagesPickup = sizePackagesPickup;
+            this.sizePackagesDelivery = sizePackagesDelivery;
+        }
+        public int getSizePackagesPickup() {
+            return sizePackagesPickup;
+        }
+
+        public int getSizePackagesDelivery() {
+            return sizePackagesDelivery;
+        }
     }
 }

@@ -90,10 +90,10 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 		border.add(initialState);
 		while (!border.isEmpty()) {
 			State bestState = null;
-			double minHeuristic = Double.MAX_VALUE;
+			Integer minHeuristic = Integer.MAX_VALUE;
 			for (State potentialNext: border) {
-				if (operations.h2(potentialNext) < minHeuristic) {
-					minHeuristic = operations.h2(potentialNext);
+				if (operations.h4(potentialNext) < minHeuristic) {
+					minHeuristic = operations.h4(potentialNext);
 					bestState = potentialNext;
 				}
 			}
