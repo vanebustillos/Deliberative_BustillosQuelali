@@ -41,10 +41,6 @@ public class AuxiliarOperations {
         return successors;
     }
 
-    public Double h1(City currentCity, City destinationCity) {
-        return currentCity.distanceTo(destinationCity);
-    }
-
     public Double h2(State state) {
         double minDistance = Double.MAX_VALUE;
         for (Task task: state.getPackagesToPickup()) {
