@@ -13,44 +13,16 @@ public class State {
     TaskSet packagesToPickup;
     TaskSet packagesToDelivery;
     List<Action> actions;
+    int capacity;
+    int depth;
 
-    public State(City currentCity, TaskSet packagesToPickup, TaskSet packagesToDelivery, List<Action> actionList) {
+    public State(City currentCity, TaskSet packagesToPickup, TaskSet packagesToDelivery, List<Action> actions, int capacity, int depth) {
         this.currentCity = currentCity;
         this.packagesToPickup = packagesToPickup.clone();
         this.packagesToDelivery = packagesToDelivery.clone();
-        this.actions = new ArrayList<>(actionList);
-    }
-
-    public City getCurrentCity() {
-        return currentCity;
-    }
-
-    public void setCurrentCity(City currentCity) {
-        this.currentCity = currentCity;
-    }
-
-    public TaskSet getPackagesToPickup() {
-        return packagesToPickup;
-    }
-
-    public void setPackagesToPickup(TaskSet packagesToPickup) {
-        this.packagesToPickup = packagesToPickup;
-    }
-
-    public TaskSet getPackagesToDelivery() {
-        return packagesToDelivery;
-    }
-
-    public void setPackagesToDelivery(TaskSet packagesToDelivery) {
-        this.packagesToDelivery = packagesToDelivery;
-    }
-
-    public List<Action> getActions() {
-        return actions;
-    }
-
-    public void setActions(List<Action> actions) {
-        this.actions = actions;
+        this.actions = new ArrayList<>(actions);
+        this.capacity = capacity;
+        this.depth = depth;
     }
 
     @Override
@@ -58,7 +30,9 @@ public class State {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         State state = (State) o;
-        return currentCity.equals(state.currentCity) &&
+        return capacity == state.capacity &&
+                depth == state.depth &&
+                currentCity.equals(state.currentCity) &&
                 Objects.equals(packagesToPickup, state.packagesToPickup) &&
                 Objects.equals(packagesToDelivery, state.packagesToDelivery) &&
                 Objects.equals(actions, state.actions);
@@ -66,6 +40,31 @@ public class State {
 
     @Override
     public int hashCode() {
-        return Objects.hash(currentCity, packagesToPickup, packagesToDelivery, actions);
+        return Objects.hash(currentCity, packagesToPickup, packagesToDelivery, actions, capacity, depth);
     }
+
+    public City getCurrentCity() {
+        return currentCity;
+    }
+
+    public TaskSet getPackagesToPickup() {
+        return packagesToPickup;
+    }
+
+    public TaskSet getPackagesToDelivery() {
+        return packagesToDelivery;
+    }
+
+    public List<Action> getActions() {
+        return actions;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public int getDepth() {
+        return depth;
+    }
+
 }

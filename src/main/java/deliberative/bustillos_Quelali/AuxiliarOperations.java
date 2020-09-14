@@ -10,14 +10,14 @@ import java.util.*;
 public class AuxiliarOperations {
 
     public State clone(State state) {
-        return new State(state.currentCity, state.packagesToPickup, state.packagesToDelivery, state.actions);
+        return new State(state.currentCity, state.packagesToPickup, state.packagesToDelivery, state.actions, state.capacity, state.depth);
     }
 
-    public List<State> getSuccessors(State state, int capacity) {
+    public List<State> getSuccessors(State state) {
         List<State> successors = new ArrayList<>();
 
         for (Task taskPickup: state.packagesToPickup) {
-            if(isPossiblePickup(state, taskPickup, capacity)) {
+            if(isPossiblePickup(state, taskPickup)) {
                 State successor = clone(state);
                 if(!taskPickup.pickupCity.equals(state.currentCity)){
                     List<City> path = successor.getCurrentCity().pathTo(taskPickup.pickupCity);
@@ -44,6 +44,7 @@ public class AuxiliarOperations {
     public Double h1(City currentCity, City destinationCity) {
         return currentCity.distanceTo(destinationCity);
     }
+
     public Double h2(State state) {
         double minDistance = Double.MAX_VALUE;
         for (Task task: state.getPackagesToPickup()) {
@@ -71,13 +72,13 @@ public class AuxiliarOperations {
             successor.actions.add(new Move(city));
         }
     }
-    private double availableCapacity(State state, int capacity){
+    private double availableCapacity(State state){
         double currentCapacity = state.packagesToPickup.weightSum();
-        return capacity - currentCapacity;
+        return state.getCapacity() - currentCapacity;
     }
 
-    private boolean isPossiblePickup(State state, Task taskPickup, int capacity){
-        return (availableCapacity(state,capacity) > 0 && taskPickup.weight <= availableCapacity(state,capacity));
+    private boolean isPossiblePickup(State state, Task taskPickup){
+        return (availableCapacity(state) > 0 && taskPickup.weight <= availableCapacity(state));
     }
 
     public boolean isGoalState(State state) {

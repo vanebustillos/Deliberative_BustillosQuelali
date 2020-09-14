@@ -21,7 +21,7 @@ import java.util.*;
 public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavior {
 
 	enum Algorithm { BFS, ASTAR }
-	
+
 	/* Environment */
 	Topology topology;
 	TaskDistribution td;
@@ -52,53 +52,23 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 	@Override
 	public Plan plan(Vehicle vehicle, TaskSet tasks) {
 		Plan plan;
-
 		// Compute the plan with the selected algorithm.
 		switch (algorithm) {
 		case ASTAR:
-			// ...
 			plan = aStar(vehicle,tasks);
-			//plan = naivePlan(vehicle, tasks);
 			break;
 		case BFS:
-			// ...
 			plan = bfs(vehicle,tasks);
-			//plan = naivePlan(vehicle, tasks);
 			break;
 		default:
 			throw new AssertionError("Should not happen.");
 		}		
 		return plan;
 	}
-	
-	private Plan naivePlan(Vehicle vehicle, TaskSet tasks) {
-		City current = vehicle.getCurrentCity();
-		Plan plan = new Plan(current);
-
-		for (Task task : tasks) {
-			// move: current city => pickup location
-			for (City city : current.pathTo(task.pickupCity)) {
-				plan.appendMove(city);
-				//System.out.println("Current: " + current + " PickupCity :" + current.pathTo(task.pickupCity));
-			}
-			plan.appendPickup(task); //Action
-			//System.out.println("Task: " + task); // Task: (Task 1, 3 kg, 40875 CHF, Z³rich -> Sion)
-
-			// move: pickup location => delivery location
-			for (City city : task.path()) {
-				plan.appendMove(city);
-				//System.out.println("City2: " + city);
-			}
-			plan.appendDelivery(task);
-			// set current city
-			current = task.deliveryCity;
-		}
-		return plan;
-	}
 
 	private Plan bfs(Vehicle vehicle, TaskSet tasks) {
 		Plan plan = new Plan(vehicle.getCurrentCity());
-		State initialState = new State(vehicle.getCurrentCity(), tasks, vehicle.getCurrentTasks(), Collections.emptyList());
+		State initialState = new State(vehicle.getCurrentCity(), tasks, vehicle.getCurrentTasks(), Collections.emptyList(), capacity,0);
 		LinkedList<State> q = new LinkedList<>();
 		q.add(initialState);
 		do {
@@ -109,32 +79,35 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
 				}
 				break;
 			}
-			q.addAll(operations.getSuccessors(state,capacity));
+			q.addAll(operations.getSuccessors(state));
 		} while (!q.isEmpty());
 		return plan;
 	}
 	private Plan aStar(Vehicle vehicle, TaskSet tasks) {
 		Plan plan = new Plan(vehicle.getCurrentCity());
-		State initialState = new State(vehicle.getCurrentCity(), tasks, vehicle.getCurrentTasks(), Collections.emptyList());
-		List<State> frontier = new ArrayList<>();
-		frontier.add(initialState);
-		while (!frontier.isEmpty()) {
+		State initialState = new State(vehicle.getCurrentCity(), tasks, vehicle.getCurrentTasks(), Collections.emptyList(),capacity,0);
+		List<State> border = new ArrayList<>();
+		border.add(initialState);
+		while (!border.isEmpty()) {
 			State bestState = null;
 			double minHeuristic = Double.MAX_VALUE;
-			for (State potentialNext: frontier) {
+			for (State potentialNext: border) {
 				if (operations.h2(potentialNext) < minHeuristic) {
 					minHeuristic = operations.h2(potentialNext);
 					bestState = potentialNext;
 				}
 			}
-			frontier.remove(bestState);
+			if(bestState == null){
+				throw new IllegalStateException("Unexpected state left.");
+			}
+			border.remove(bestState);
 			if (operations.isGoalState(bestState)) {
 				for (Action action: bestState.getActions()) {
 					plan.append(action);
 				}
 				return plan;
 			}
-			frontier.addAll(operations.getSuccessors(bestState, capacity));
+			border.addAll(operations.getSuccessors(bestState));
 		}
 		return null;
 	}
