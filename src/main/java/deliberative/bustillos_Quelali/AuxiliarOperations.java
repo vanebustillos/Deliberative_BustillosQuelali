@@ -50,51 +50,53 @@ public class AuxiliarOperations {
     public double h1(Vehicle vehicle, State state) {
         double maxDistance = 0.0;
         City farthestCity = null;
-
-        for (Task task : state.getPackagesToPickup()) {
-            Double distance = state.getCurrentCity().distanceTo(task.pickupCity);
-            if (distance > maxDistance) {
-                maxDistance = distance;
-                farthestCity = task.pickupCity;
+        if (!state.getPackagesToPickup().isEmpty()) {
+            for (Task task : state.getPackagesToPickup()) {
+                double distance = state.getCurrentCity().distanceTo(task.pickupCity);
+                if (distance > maxDistance) {
+                    maxDistance = distance;
+                    farthestCity = task.pickupCity;
+                }
             }
         }
-        for (Task task : state.getPackagesToDelivery()) {
-            double distance = state.getCurrentCity().distanceTo(task.deliveryCity);
-            if (distance > maxDistance) {
-                maxDistance = distance;
-                farthestCity = task.deliveryCity;
+        if(!state.getPackagesToDelivery().isEmpty()){
+            for (Task task : state.getPackagesToDelivery()) {
+                double distance = state.getCurrentCity().distanceTo(task.deliveryCity);
+                if (distance > maxDistance) {
+                    maxDistance = distance;
+                    farthestCity = task.deliveryCity;
+                }
             }
+            return realCost(vehicle, state.getCurrentCity(), farthestCity);
         }
-
-        return realCost(vehicle, state.getCurrentCity(), farthestCity);
-    }
+        return 0;
+   }
 
     /*
-     * Heuristic that calculates the sumatory of the cost that the agent has to spend
-     *  by moving between cities for pickup or deliver a package.
+     * Heuristic that calculates the cost that the agent has to spend
+     *  by moving to the city that has the maximum cost for pickup or deliver a package.
      *
      * When the agent deliver a package, it obtains a reward for it.
      * */
+
     public double h2(Vehicle vehicle, State state) {
         double cost = 0.0;
-        for (Task task : state.getPackagesToPickup()) {
-            //cost = cost + realCost(vehicle, state.getCurrentCity(), task.pickupCity);
-            cost = cost + realCost(vehicle, state.getCurrentCity(), task.pickupCity) - task.reward;
+        if (!state.getPackagesToPickup().isEmpty()) {
+            for (Task task : state.getPackagesToPickup()) {
+                if (realCost(vehicle, state.getCurrentCity(), task.pickupCity) > cost) {
+                    cost = realCost(vehicle, state.getCurrentCity(), task.pickupCity);
+                }
+            }
         }
-       /* for (Task task : state.getPackagesToDelivery()) {
-            //double netCost = task.reward - realCost(vehicle, state.getCurrentCity(), task.deliveryCity);
-            double netCost = realCost(vehicle, state.getCurrentCity(), task.deliveryCity) - task.reward;
-            cost = cost + netCost;
-        }*/
+        if (!state.getPackagesToDelivery().isEmpty()){
+            for (Task task : state.getPackagesToDelivery()) {
+                double netCost = realCost(vehicle, state.getCurrentCity(), task.deliveryCity) - task.reward;
+                if (netCost > cost) {
+                    cost = netCost;
+                }
+            }
+        }
         return cost;
-
-    }
-
-    public double h3(State state) {
-        if (state.getPackagesToPickup().size() != 0 && state.getPackagesToDelivery().size() != 0) {
-            return state.getPackagesToDelivery().size() / state.getPackagesToPickup().size();
-        }
-        return 0;
     }
 
     private void processDelivery(Task taskDelivery, State successor) {

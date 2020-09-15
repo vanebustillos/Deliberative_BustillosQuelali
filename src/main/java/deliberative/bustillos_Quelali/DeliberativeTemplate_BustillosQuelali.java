@@ -87,32 +87,14 @@ public class DeliberativeTemplate_BustillosQuelali implements DeliberativeBehavi
         while (!border.isEmpty()) {
             State bestState = null;
 
-            //-------------------H3
-            /*double minHeuristic = Double.MAX_VALUE;
-            for (State potentialNext : border) {
-                if (operations.h3(potentialNext) < minHeuristic) {
-                    minHeuristic = operations.h3(potentialNext);
-                    bestState = potentialNext;
-                }
-            }*/
-            //-------------------H2 max
-			double maxHeuristic = - Double.MAX_VALUE;
-			for (State potentialNext: border) {
-				if (operations.h2(vehicle,potentialNext) > maxHeuristic) {
-					maxHeuristic = operations.h2(vehicle, potentialNext);
-					bestState = potentialNext;
-				}
-			}
-			//-------------------
-            //-------------------H2 min
-			/*double minHeuristic = Double.MAX_VALUE;
+			double minHeuristic = Double.MAX_VALUE;
 			for (State potentialNext: border) {
 				if (operations.h2(vehicle,potentialNext) < minHeuristic) {
 					minHeuristic = operations.h2(vehicle, potentialNext);
 					bestState = potentialNext;
 				}
-			}*/
-            //-------------------------
+			}
+
             if (bestState == null) {
                 throw new IllegalStateException("Unexpected state left.");
             }
