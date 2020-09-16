@@ -53,21 +53,21 @@ la entrega.
 
 En las siguientes imagenes se muestra la ejecución del programa con 5 paquetes, un agente random
 (vehículo 1, azul) y los démas son agentes deliberativos que emplean los algoritmos de búsqueda correspondiente. 
-####-   Con un agente deliberativo.
+#### -   Con un agente deliberativo.
 *   BFS 
 
 ![Screenshot](img/bfs1.jpeg)
 *   A*
 
 ![Screenshot](img/aStar1.jpeg)
-####-   Con dos agentes deliberativos.
+#### -   Con dos agentes deliberativos.
 *   BFS 
 
 ![Screenshot](img/bfs2.jpeg)
 *   A*
 
 ![Screenshot](img/aStar2.jpeg)
-####-   Con tres agentes deliberativos.
+#### -   Con tres agentes deliberativos.
 *   BFS 
 
 ![Screenshot](img/bfs3.jpeg)
