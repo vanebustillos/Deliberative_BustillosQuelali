@@ -99,6 +99,32 @@ public class AuxiliarOperations {
         return cost;
     }
 
+    /*
+     * Heuristic that calculates the cost that the agent has to spend
+     *  by moving from the initial current city to the city that has the maximum cost for pickup or deliver a package.
+     *
+     * When the agent deliver a package, it obtains a reward for it.
+     * */
+    public double h3(Vehicle vehicle, State initial, State state) {
+        double cost = 0.0;
+        if (!state.getPackagesToPickup().isEmpty()) {
+            for (Task task : state.getPackagesToPickup()) {
+                if (realCost(vehicle, state.getCurrentCity(), task.pickupCity) > cost) {
+                    cost = realCost(vehicle, initial.getCurrentCity(), task.pickupCity);
+                }
+            }
+        }
+        if (!state.getPackagesToDelivery().isEmpty()){
+            for (Task task : state.getPackagesToDelivery()) {
+                double netCost = realCost(vehicle, initial.getCurrentCity(), task.deliveryCity) - task.reward;
+                if (netCost > cost) {
+                    cost = netCost;
+                }
+            }
+        }
+        return cost;
+    }
+
     private void processDelivery(Task taskDelivery, State successor) {
         successor.actions.add(new Delivery(taskDelivery));
         successor.packagesToDelivery.remove(taskDelivery);

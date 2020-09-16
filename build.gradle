@@ -33,4 +33,3 @@ application {
 }
 
 run.setArgsString('-a config/agents.xml config/deliberative.xml deliberative-random deliberative-bustillosQuelali')
-//run.setArgsString('-a config/agents.xml config/deliberative.xml deliberative-bustillosQuelali deliberative-random')

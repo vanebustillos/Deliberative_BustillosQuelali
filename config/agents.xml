@@ -15,4 +15,5 @@
 		<set class-name="deliberative.bustillos_Quelali.DeliberativeTemplate_BustillosQuelali"/>
 		<set algorithm="ASTAR"/>
 	</agent>
+
 </agents>
