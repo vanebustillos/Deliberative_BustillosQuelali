@@ -49,7 +49,7 @@ La heurística que se implementó se basa en estimar el costo hasta el mayor cos
 estado final, considerando que al momento de entregar un paquete, el agente recibe un reward por 
 la entrega.
 
-##Resultados Obtenidos
+## Resultados Obtenidos
 
 En las siguientes imagenes se muestra la ejecución del programa con 5 paquetes, un agente random
 (vehículo 1, azul) y los démas son agentes deliberativos que emplean los algoritmos de búsqueda correspondiente. 
